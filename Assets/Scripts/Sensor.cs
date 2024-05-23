@@ -56,7 +56,7 @@ public class Sensor : MonoBehaviour
 
             averageBrightness = totalBrightness / pixelCount;
             //Debug.Log(areaSize);
-            Debug.Log("Average Brightness: " + averageBrightness);
+            //Debug.Log("Average Brightness: " + averageBrightness);
 
         }
     }
