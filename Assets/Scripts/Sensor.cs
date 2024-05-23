@@ -8,12 +8,12 @@ public class Sensor : MonoBehaviour
     [SerializeField] Image image;
     [SerializeField] GameObject obj;
     [SerializeField] Texture2D tex;
-    [SerializeField] int areaSize = 30; // Adjust as needed
+    public float averageBrightness;
 
     // Start is called before the first frame update
     void Start()
     {
-
+        
     }
     // Update is called once per frame
     void Update()
@@ -39,6 +39,7 @@ public class Sensor : MonoBehaviour
             // Calculate the average brightness
             float totalBrightness = 0f;
             int pixelCount = 0;
+            int areaSize = GameObject.Find("Player").GetComponent<Player>().AreaSize;
 
             for (int x = -areaSize / 2; x <= areaSize / 2; x++)
             {
@@ -53,7 +54,8 @@ public class Sensor : MonoBehaviour
                 }
             }
 
-            float averageBrightness = totalBrightness / pixelCount;
+            averageBrightness = totalBrightness / pixelCount;
+            //Debug.Log(areaSize);
             Debug.Log("Average Brightness: " + averageBrightness);
 
         }
