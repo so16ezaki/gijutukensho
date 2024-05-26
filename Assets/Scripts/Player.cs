@@ -41,8 +41,8 @@ public class Player : MonoBehaviour
         // 黒を検知するほど値が小さくなる
         sensorValue = leftSensor.averageBrightness - rightSensor.averageBrightness;//0のとき直進、負のとき左カーブ、正のとき右カーブ
 
-        leftspeed = Mathf.Clamp(1 + sensorValue,0,1);
-        rightspeed = Mathf.Clamp(1 - sensorValue, 0, 1);
+        leftspeed = Mathf.Clamp(2 +sensorValue*10,-10,10);
+        rightspeed = Mathf.Clamp(2 - sensorValue*10, -10, 10);
        
         }
         else
@@ -81,11 +81,13 @@ public class Player : MonoBehaviour
     {
         Vector3 Direction = transform.right;//回転方向単位ベクトル
 
-        frontLeft.AddTorque(Direction * left);
-        backLeft.AddTorque(Direction * left);
+        
 
-        frontRight.AddTorque(Direction * right);
-        backtRight.AddTorque(Direction * right);
+        frontLeft.angularVelocity = (Direction * left);
+        backLeft.angularVelocity = (Direction * left);
+
+        frontRight.angularVelocity = (Direction * right);
+        backtRight.angularVelocity = (Direction * right);
 
     }
 }
