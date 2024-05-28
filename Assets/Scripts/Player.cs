@@ -1,15 +1,21 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-
-    [SerializeField] int areaSize = 30;
-    [SerializeField] float sensorValue = 0;
-    [SerializeField] float leftspeed = 0;
-    [SerializeField] float rightspeed = 0;
+    #region serializefield
+    [SerializeField] int areaSize;
+    [SerializeField] float pGain;
+    [SerializeField] float dGain;
+    [SerializeField] float normalSpeed;
+    [SerializeField] float maxSpeed;
+    [SerializeField] float minSpeed;
+    [SerializeField] float sensorValue;
+    [SerializeField] float leftspeed;
+    [SerializeField] float rightspeed;
     [SerializeField] Sensor leftSensor;
     [SerializeField] Sensor rightSensor;
 
@@ -17,8 +23,9 @@ public class Player : MonoBehaviour
     [SerializeField] Rigidbody frontLeft;
     [SerializeField] Rigidbody backtRight;
     [SerializeField] Rigidbody backLeft;
+    #endregion
 
-
+    float postSensorValue =0;
 
     public int AreaSize { get { return areaSize; } }
 
@@ -36,36 +43,23 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(! Input.GetKeyDown(KeyCode.Escape)) 
-        { 
+        
+        
         // 黒を検知するほど値が小さくなる
         sensorValue = leftSensor.averageBrightness - rightSensor.averageBrightness;//0のとき直進、負のとき左カーブ、正のとき右カーブ
 
-        leftspeed = Mathf.Clamp(2 +sensorValue*10,-10,10);
-        rightspeed = Mathf.Clamp(2 - sensorValue*10, -10, 10);
-       
-        }
-        else
-        {
-            Debug.Log("kita");
-            switch (Input.GetAxis("Horizontal"))
-            {
-                case 1:
-                    leftspeed = 0;
-                    rightspeed = 1;
-                    break;
-                case -1:
-                    leftspeed = 1;
-                    rightspeed = 0;
-                    break;
-                default:
-                    leftspeed = 0;
-                    rightspeed = 0;
-                    break;
-            }
-        }
+        float dSpeed = postSensorValue - sensorValue;
 
-        AddTorque(leftspeed, rightspeed);
+        float controllSpeed = sensorValue * pGain + dSpeed * dGain;
+
+        postSensorValue = sensorValue;
+        
+        leftspeed = Mathf.Clamp(normalSpeed + controllSpeed, minSpeed, maxSpeed);
+        rightspeed = Mathf.Clamp(normalSpeed - controllSpeed, minSpeed, maxSpeed);
+
+
+
+        SetSpeed(leftspeed, rightspeed);
         //float lspeed = 20 - leftSensor.averageBrightness * 30;
         //Vector3 lDirection = transform.right*lspeed;
         //frontLeft.AddTorque(lDirection);
@@ -77,11 +71,11 @@ public class Player : MonoBehaviour
         //backtRight.AddTorque(rDirection);
     }
 
-    private void AddTorque(float left,float right)
+    private void SetSpeed(float left, float right)
     {
         Vector3 Direction = transform.right;//回転方向単位ベクトル
 
-        
+
 
         frontLeft.angularVelocity = (Direction * left);
         backLeft.angularVelocity = (Direction * left);
